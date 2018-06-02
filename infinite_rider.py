@@ -1,9 +1,11 @@
 import pygame
-#Game loop
+
+# Game loop
 
 WIDTH = 800
 HEIGHT = 600
 FPS = 30
+
 
 class Game:
 
@@ -20,7 +22,7 @@ class Game:
     def run(self):
         self.playing = True
         while self.playing:
-            self.clock.ticks(FPS)
+            self.clock.tick(FPS)
             self.events()
             self.update()
             self.draw()
@@ -29,7 +31,10 @@ class Game:
         pass
 
     def events(self):
-        pass
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.playing = False
+                self.running = False
 
     def draw(self):
         pass
@@ -39,6 +44,7 @@ class Game:
 
     def show_go_screen(self):
         pass
+
 
 g = Game()
 g.show_start_screen()
