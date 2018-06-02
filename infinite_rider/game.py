@@ -1,4 +1,7 @@
-import pygame, os
+import os
+import pygame
+
+from infinite_rider import player
 
 
 class Game:
@@ -13,16 +16,13 @@ class Game:
         # Pointer Sprite
         image_path = os.path.dirname(__file__) + os.sep + ".." + os.sep + "assets" + os.sep + "pointer.png"
         self.pointer = pygame.image.load(image_path).convert_alpha()
-
-        # Player Sprite
-        image_path = os.path.dirname(__file__) + os.sep + ".." + os.sep + "assets" + os.sep + "player.png"
-        self.player = pygame.image.load(image_path).convert_alpha()
-        self.player_rect = pygame.Rect(0, 0, self.player.get_width(), self.player.get_height())
+        self.player = player.Player()
 
         # Mouse position
         self.mouse_position = pygame.mouse.get_pos()
-        
+
         self.playing = True
+        self.running = False
         self.display()
 
     def display(self):
@@ -38,19 +38,22 @@ class Game:
 
             # Mouse indication follow cursor
             mouse_rect = self.screen.blit(self.pointer, (cursorW, cursorH))
-            self.player_rect = self.screen.blit(self.player, (self.player_rect.x, self.player_rect.y))
+            self.player.display(self.screen)
 
-            if self.player_rect.x is not mouse_rect.x:
-                if self.player_rect.x < mouse_rect.x:
-                    self.player_rect.x += 1
-                if self.player_rect.x > mouse_rect.x:
-                    self.player_rect.x -= 1
+            if self.running is True:
+                self.player.shapeshift()
+                if self.player.rect.x is not mouse_rect.x:
+                    if self.player.rect.x < mouse_rect.x:
+                        self.player.rect.x += 1
+                    if self.player.rect.x > mouse_rect.x:
+                        self.player.rect.x -= 1
 
-            if self.player_rect.y is not mouse_rect.y:
-                if self.player_rect.y < mouse_rect.y:
-                    self.player_rect.y += 1
-                if self.player_rect.y > mouse_rect.y:
-                    self.player_rect.y -= 1
+                if self.player.rect.y is not mouse_rect.y:
+                    if self.player.rect.y < mouse_rect.y:
+                        self.player.rect.y += 1
+                    if self.player.rect.y > mouse_rect.y:
+                        self.player.rect.y -= 1
+
             pygame.time.wait(20)
             pygame.display.flip()
 
@@ -59,6 +62,9 @@ class Game:
     def events(self):
         # Game loop events
         for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                self.running = True
+                self.player.shapeshift()
             if event.type == pygame.QUIT:
                 if self.playing:
                     self.playing = False
